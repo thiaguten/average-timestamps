@@ -1,0 +1,54 @@
+import com.github.spotbugs.SpotBugsTask
+
+plugins {
+    id 'application'
+    id 'java-library'
+    id 'com.github.spotbugs' version '2.0.0'
+}
+
+group 'br.com.thiaguten'
+version '0.0.1'
+//buildDir = "/mnt/ramdisk/${project.name}"
+
+wrapper {
+    description = 'Generates gradlew[.bat] scripts'
+    gradleVersion = '5.6.2'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.9.0'
+    implementation group: 'org.mongodb', name: 'bson', version: '3.11.0'
+}
+
+tasks.withType(JavaCompile) {
+    options.with {
+        encoding = 'UTF-8'
+        compilerArgs = ['-Xlint:all']
+        fork = true
+        incremental = true
+    }
+}
+
+application {
+    mainClassName = 'br.com.thiaguten.Main'
+}
+
+spotbugs {
+    toolVersion = '4.0.0-beta4'
+    effort = 'max'
+    reportLevel = 'high'
+}
+
+// To generate an HTML report instead of XML
+tasks.withType(SpotBugsTask) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
